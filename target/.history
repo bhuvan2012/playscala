@@ -1,0 +1,26 @@
+play run
+play debug
+debug
+run
+compile
+sbt
+run
+clean
+run
+clean
+run
+cd ..
+run
+exit
+run
+eclipse
+run
+runAll
+run
+sbt
+run
+exit
+run
+activator 
+runAll
+run

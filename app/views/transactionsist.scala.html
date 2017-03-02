@@ -1,0 +1,250 @@
+@(id: String)
+
+@main("Welcome to Play") {
+	<!--account no----accountId(dropdown) account type----dropdown-->
+<div class="row">
+        <hr>
+        <div class="col-lg-12" style="padding:0px;">
+            <div class="col-lg-6"><h3 id="forms"><!--<b>Transactions</b></h3>--></div>
+            <div class="col-lg-6 pull-right">
+                <button type="button" ng-model="todayval" style="font-size:12px" ng-click="today(@(id));" id="clickmeonce">Todays Transactions</button>
+                <button type="button" ng-model="toptenrec" style="font-size:12px" ng-click="topten();" >Last 10 Transactions</button>
+                <button type="button" ng-model="daterange" style="font-size:12px" ng-click="opendates();" >Select Date Range</button>
+                <button type="button"  style="font-size:12px" ng-click="balance_transfer=!balance_transfer" >Balance Transfer</button>
+            </div>
+
+            <hr>
+        </div>
+
+        <div class="col-lg-12 " ng-show="selectrange">
+            <span class="pull-right">
+            <input type="date" name="startDate" id="startDate" ng-model="startDate" style="width:130px" >
+            <input type="date" name="endDate" id="endDate" ng-model="endDate" style="width:130px">
+            <button type="button" ng-click="daterange(@(id));" >Filter</button>
+            </span>
+        </div>
+
+		<div class="col-lg-12" style="padding: 0px !important;">
+		<table class="table table-bordered table-striped table-hover " style="500px!important;">
+		  <thead>
+			<tr>
+              <th>Customer Name</th>
+			  <th>A/C No</th>
+			  <th>A/C Type</th>
+			  <th>Available Balance</th>
+			</tr>
+		  </thead>
+		  <tbody>
+			<tr ng-repeat="custc in activetransactAcountList | filter : @(id)">
+			 <td>{{custc.custName}}</td>
+			  <td>{{custc.id}}</td>
+			  <td>{{custc.name}}</td>
+              <td>{{custc.balance}}</td>
+			</tr>
+		  </tbody>
+		</table>
+		</div>
+</div>
+
+    <div class="row " ng-show="balance_transfer">
+        <hr>
+        <div class="row well">
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>From Account</label>
+                    <input type="text" name="fromacc" ng-model="fromacc" disabled="true">
+                    <button ng-click="selectaccount('fromacc')">SELECT</button>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label>To Account</label>
+                    <input type="text" name="toacc" ng-model="toacc" disabled="true">
+                    <button ng-click="selectaccount('toacc')">SELECT</button>
+                </div>
+            </div>
+            <div class="col-lg-4"> <div class="form-group">
+                <label>Amount</label>
+                <input type="text" name="amountotransfer" ng-model="amountotransfer">
+                <button ng-click="tranferamount();">TRANSFER</button>
+            </div></div>
+        </div>
+        <hr>
+        <div class="row well">
+            <div class="col-lg-12 " >
+                <table class="table table-bordered table-striped table-hover ">
+                    <thead>
+                        <tr>
+                            <th>Customer Name</th>
+                            <th>A/C No</th>
+                            <th>A/C Type</th>
+                            <th>Available Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="custc in activetransactAcountList" class="clickable-row" value='{{custc.id}}' ng-click="selectcusttransfer(custc.id); ">
+                            <td>{{custc.custName}}</td>
+                            <td>{{custc.id}}</td>
+                            <td>{{custc.name}}</td>
+                            <td>{{custc.balance}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+	<!--deposite form-->
+    <div class="row">
+        <div class="col-lg-12" style="padding:0px!important;"><div class="col-lg-4 padding0" style="padding:0px!important;"><h3 id="forms">Transactions</h3></div></div>
+                <div class="col-lg-12" style="padding:0px" ng-if="viewhistory.length">
+                    <table class="table table-bordered table-striped table-hover ">
+                        <thead>
+                            <tr>
+                                <th>TRANSACTION MODE</th>
+                                <th>AMOUNT</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr dir-paginate="cus in Listfilter | itemsPerPage:5 | filter:todayval | limitTo:toptenRecords track by $index">
+                                <td>{{cus.type | lowercase}}</td>
+                                <td>{{cus.amount}}</td>
+                                <td>{{cus.at}} {{cus.t}}</td>
+                            </tr>
+                        </tbody>
+                   </table>
+        <dir-pagination-controls max-size="4" direction-links="true" boundary-links="true" ></dir-pagination-controls>
+        </div>
+    </div>
+    <!--deposite form-->
+
+    <div class="row">
+        <div class="col-lg-12 well">
+
+                <form role="form" name="frmcreate1" enctype="multipart/form-data" method="post" class="has-sucess" >
+                    <fieldset>
+                        <div class="form-group">
+                            <label for="inputEmail" class="col-lg-4 control-label"><span class="pull-right">Customer A/C No:</label>
+                            <div class="col-lg-6">
+                                <select class="form-control" id="id"  name="id"  ng-model="Depositamount123.id" ng-change="getAccountType()"  ng-options="custx.id as custx.id for custx in transactionsistresult" required>
+                                    <option value="">--Select A/C NO--</option>
+                                </select>
+                                <span style="color:red" ng-show="submit && frmcreate1.id.$error.required">Required A/C No</span>
+                            </div>
+                        </div>
+
+
+
+                        <div class="form-group">
+                            <label for="inputPassword" class="col-lg-4 control-label"><span class="pull-right">Amount:</span></label>
+                            <div class="col-lg-6">
+                                <input name="deposite" class="form-control" autofocus ng-model="Depositamount123.amount" id="amount" required>
+                                <span style="color:red" ng-show="submit && frmcreate1.deposite.$error.required">Required Amount</span>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="name" class="col-lg-4 control-label" ></label>
+                            <div class="col-lg-6">&nbsp;</div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-lg-8 col-lg-offset-3">
+                                <button type="reset" class="btn btn-default"data-dismiss="modal">Cancel</button>
+                                <button type="submit" ng-click="depositeamt(frmcreate1.$valid);" class="btn btn-primary">Deposite</button>
+                                <button type="submit" ng-click="withdrawamt(frmcreate1.$valid);" class="btn btn-primary">Withdraw</button>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+        </div>
+    </div>
+
+
+
+        <!--history-->
+        <!--history-->
+        <!--history-->
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="modal fade" id="myModalHistory" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content col-lg-12">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">Transactions</h4>
+                        </div>
+
+                        <div class="modal-body" >
+                            <div class="well bs-component">
+                                <form role="form" name="frmcreate1" enctype="multipart/form-data" method="get" class="has-sucess" >
+                                    <fieldset>
+
+                                        <div class="form-group">
+                                            <label for="inputEmail" class="col-lg-4 control-label">Customer A/C No:</label>
+                                            <div class="col-lg-8">
+                                                <select class="form-control" id="accId"  name="accId"   ng-model="Depositransact.id" ng-options="custx.id as custx.id for custx in transactionsistresult">
+                                                    <option value="">--Select A/C NO--</option>
+                                                </select>
+
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </form>
+                            </div>
+
+                            <div class="col-lg-12" style="padding:0px" ng-if="viewhistory.length">
+
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label for="inputEmail" class="col-lg-3 control-label">Customer:</label>
+                                        <div class="col-lg-2">
+                                            <a href="#"><b> {{matchname}} </b></a>
+
+                                        </div>
+
+                                        <label for="inputEmail" class="col-lg-3 control-label">AccountType:  </label>
+                                        <div class="col-lg-2">
+                                            <a href="#">  <b>  {{actype}}  </b></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <table class="table table-bordered table-striped table-hover ">
+                                    <thead>
+                                        <tr>
+                                            <th>TRANSACTION MODE</th>
+
+                                            <th>AMOUNT</th>
+                                                <!--<th>Time</th>-->
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        <tr ng-repeat="cus in viewhistory">
+                                            <td>{{cus.type | lowercase}}</td>
+                                            <td>{{cus.amount}}</td>
+                                                <!--   <td>{{cus.at}}</td>-->
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="form-group centered" ng-if="!viewhistory">
+                                <div class="col-lg-6 col-lg-offset-5">
+                                    <button type="reset" class="btn btn-primary"data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+	}

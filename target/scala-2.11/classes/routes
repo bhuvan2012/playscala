@@ -1,0 +1,39 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET  /assets/*file  controllers.Assets.versioned(path="/public", file: Asset)
+
+
+GET     /                           controllers.HomeController.index
+GET     /customer                        controllers.HomeController.customer
+#GET     /cusaccount                           controllers.HomeController.customeraccount
+#GET     /bankaccount                           controllers.HomeController.bankaccount
+
+# for customer screen
+GET   /addcustomer                               controllers.HomeController.addcustomer
+GET   /customerlist                               controllers.HomeController.customerlist
+
+POST   /redirectcustform                               controllers.HomeController.redirectcustform
+
+POST   /addcustomer1                               controllers.HomeController.addcustomer1
+POST   /updatecustomer                               controllers.HomeController.updatecustomer
+
+# for customeraccount screen
+GET   /customeraccountlist/:id                               controllers.HomeController.customeraccountlist(id:String)
+
+GET   /addcustomeraccount                               controllers.HomeController.addcustomeraccount
+POST   /addcustomeraccountpost                               controllers.HomeController.addcustomeraccountpost
+POST   /customerlistpost                               controllers.HomeController.customerlistpost
+POST   /activeinactivecusaccount                     controllers.HomeController.activeinactivecusaccount
+
+# for customeraccount screen
+GET   /transactionsist/:accountId                    controllers.HomeController.transactionsist(accountId:String)
+GET   /balancetransfer/:id                              controllers.HomeController.balancetransfer(id:String)
+POST   /addcustomeraccountpost1                      controllers.HomeController.addcustomeraccountpost1
+POST   /transactionsistpost                          controllers.HomeController.transactionsistpost
+GET   /viewhistory/:id                               controllers.HomeController.viewhistory(id)
+PUT   /addamount                                     controllers.HomeController.addamount
+PUT   /withdrawamount                                controllers.HomeController.withdrawamount

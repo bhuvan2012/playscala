@@ -1,0 +1,51 @@
+@(id: String)
+
+@main("Welcome to Play") {
+    <hr>
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="form-group">
+                <label>From Account</label>
+                <input type="text" name="fromacc" ng-model="fromacc" disabled="true">
+                <button ng-click="selectaccount('fromacc')">SELECT</button>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="form-group">
+                <label>To Account</label>
+                <input type="text" name="toacc" ng-model="toacc" disabled="true">
+                <button ng-click="selectaccount('toacc')">SELECT</button>
+            </div>
+        </div>
+        <div class="col-lg-4"> <div class="form-group">
+            <label>Amount</label>
+            <input type="text" name="amountotransfer" ng-model="amountotransfer">
+            <button ng-click="tranferamount();">TRANSFER</button>
+        </div></div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-lg-12" >
+            <table class="table table-bordered table-striped table-hover " >
+                <thead>
+                    <tr>
+                        <th>Customer Name</th>
+                        <th>A/C No</th>
+                        <th>A/C Type</th>
+                        <th>Available Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="custc in activetransactAcountList" class="clickable-row" value='{{custc.id}}' ng-click="selectcusttransfer(custc.id); ">
+                        <td>{{custc.custName}}</td>
+                        <td>{{custc.id}}</td>
+                        <td>{{custc.name}}</td>
+                        <td>{{custc.balance}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

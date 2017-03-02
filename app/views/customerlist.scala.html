@@ -1,0 +1,112 @@
+@(message: String)
+
+@main("Welcome to Play") {
+
+	<div class="row" >
+
+		<div class="col-lg-6 padding0"><h3 id="forms">Customers</h3></div>
+		<div class="col-lg-6 padding0"><h3 id="forms"><!--<button data-toggle="modal" href="#" data-target="#myModal" class="btn btn-primary btn-md pull-right">Add Customer</button>--></h3></div>
+
+		<div class="col-lg-12" style='height:250px!important'>
+		<table class="table table-bordered table-striped table-hover" >
+		  <thead>
+			  <tr>
+				  <td colspan="5"> <label ><b>Search</b></label>
+					  <input type="text" ng-model="search123"  placeholder="Search"></td></tr>
+			<tr>
+			  <th>Customer ID</th>
+			  <th>Customer Name</th>
+			  <th>Customer Address</th>
+			  <th>Customer PhoneNo</th>
+			  <th>Customer EmailId</th>
+			</tr>
+		  </thead>
+		  <tbody>
+		 
+			<tr   dir-paginate="cus in customers |filter:search123 |itemsPerPage:5 " class="clickable-row" value='{{cus.id}}' ng-click="selectcust(cus.id); ">
+              <td><a ng-href="http://localhost:9000/customeraccountlist/{{cus.id}}">{{cus.id}}</a></td>
+              <td>{{cus.name}}</td>
+              <td>{{cus.address}}</td>
+              <td>{{cus.phoneNo}}</td>
+              <td>{{cus.emailId}}</td>
+            </tr>		
+			
+		  </tbody>
+		</table>
+			
+		</div>
+		 <div class="col-lg-12">
+		<dir-pagination-controls
+			max-size="1"
+			direction-links="true"
+			boundary-links="true" >
+			</dir-pagination-controls>
+			</div>
+	</div>
+
+	<div class="row">
+          <div class="col-lg-12">		  
+              <form role="form" name="frmcreate1" style="border:1px solid #ecf0f1;" enctype="multipart/form-data" method="post" class="has-sucess" novalidate>
+                <fieldset>                  
+                  <div class="form-group"><span>{{ids.checked.length}}</span>
+                    <label for="inputEmail" class="col-lg-4 control-label"></label>
+                    <div class="col-lg-8">						
+                    </div>
+                  </div>
+				  <div class="form-group">
+                    <label for="inputEmail" class="col-lg-4 control-label"><span class="pull-right">Customer ID :</span></label>
+                    <div class="col-lg-6">
+                      <input type="text" class="form-control" id="id" placeholder="Customer ID" name="cid" autofocus ng-model="CustomerDetail.id" required/>
+						<span style="color:red" ng-show="frmcreate1.cid.$error.required && frmcreate1.$submitted">Required :Customer ID</span>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="inputPassword" class="col-lg-4 control-label"><span class="pull-right">Customer Name :</span></label>
+                    <div class="col-lg-6">
+                      <input type="text" class="form-control" id="name" placeholder="Customer Name" name="cname" autofocus ng-model="CustomerDetail.name"  required>
+					  <span style="color:red" ng-show="frmcreate1.cname.$error.required && frmcreate1.$submitted">Required :Customer Name</span>
+                    </div>
+                  </div>
+				  
+					<div class="form-group">
+						<label for="name" class="col-lg-4 control-label" ><span class="pull-right">Customer Address :</span></label>
+						<div class="col-lg-6">
+							<input name="address" class="form-control" placeholder="Address"  autofocus ng-model="CustomerDetail.address" type="text" id="address" required/>
+							<span style="color:red" ng-show="frmcreate1.address.$error.required && frmcreate1.$submitted">Required :Address</span>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="name"  class="col-lg-4 control-label"><span class="pull-right">Customer PhoneNo :</span></label>
+						<div class="col-lg-6">
+							<input name="phoneNo" class="form-control" placeholder="Phone Number" autofocus ng-model="CustomerDetail.phoneNo" type="text"  id="phoneNo" required/>
+							<span style="color:red" ng-show="frmcreate1.phoneNo.$error.required && frmcreate1.$submitted">Required :Phone Number</span>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="name" class="col-lg-4 control-label" ><span class="pull-right">Customer EmailId :</span></label>
+						<div class="col-lg-6">
+							<input name="EmailId" class="form-control col-lg-6" placeholder="Email address" autofocus ng-model="CustomerDetail.emailId" type="text"    id="emailId" required/>
+							<span style="color:red" ng-show="frmcreate1.EmailId.$error.required && frmcreate1.$submitted">Required :Email ID</span>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="name" class="col-lg-4 control-label" ></label>
+						<div class="col-lg-8">&nbsp;</div>
+					</div>
+
+                  <div class="form-group">
+                    <div class="col-lg-8 col-lg-offset-3">
+                      <button type="reset" class="btn btn-default"  data-dismiss="modal">Cancel</button>
+                      <button ng-show="add" ng-click="addCust(frmcreate1.$valid) ; " class="btn btn-primary">Submit</button>
+                      <button ng-show="update" ng-click="upCust(frmcreate1.$valid) ; " class="btn btn-primary">Update</button>
+                    </div>
+                  </div>
+                </fieldset>
+              </form>
+           
+        </div>
+      </div>
+
+
+
+}

@@ -1,0 +1,31 @@
+@(message: String)
+
+@main(message) {
+
+<div class="col-sm-8"  >
+
+    <div class="col-md-2"><b>id:</b></div>
+    <div class="col-md-2"><b>Name:</b>  </div>
+    <div class="col-md-2"><b>Address:</b>  </div>
+    <div class="col-md-2"><b>PhoneNo:</b> </div>
+    <div class="col-md-2"><b>EaailId:</b> </div>
+    <div class="col-sm-12">
+        <hr style="border:1px solid #fff"/>
+    </div>
+
+</div>
+
+<div class="col-sm-8">
+
+    <div class="col-md-2"> {{customers.id}}</div>
+    <div class="col-md-2">{{customers.name}}</div>
+    <div class="col-md-2">  {{customers.address}}</div>
+    <div class="col-md-2">  {{customers.phoneNo}}</div>
+    <div class="col-md-2">  {{customers.emailId}}</div>
+    <div class="col-sm-12">
+        <hr style="border:1px solid #fff"/>
+    </div>
+
+</div>
+
+}

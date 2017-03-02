@@ -1,0 +1,748 @@
+@(title: String)(content: Html)
+<!DOCTYPE html>
+<html lang="en" data-ng-app="samples">
+  <head>
+    <meta charset="utf-8">
+    <title>Banking Services</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bootstrap.css")" media="screen">
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/styles.css")">
+      <script src="@routes.Assets.versioned("javascripts/jquery-1.10.2.min.js")"></script>
+      <script src="@routes.Assets.versioned("javascripts/bootstrap.min.js")" type="text/javascript"></script>
+	<script src="@routes.Assets.versioned("javascripts/angular.js")" type="text/javascript"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular-route.min.js"></script>
+      <script src="@routes.Assets.versioned("javascripts/dirPagination.js")"></script>
+	<script src="@routes.Assets.versioned("javascripts/ui-bootstrap-tpls-1.3.2.min.js")" type="text/javascript"></script>
+	<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")">        
+	<link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/custom.min.css")">
+	<link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+	  <script src="../bower_components/html5shiv/dist/html5shiv.js"></script>
+	  <script src="../bower_components/respond/dest/respond.min.js"></script>
+    <![endif]-->
+ <script>
+
+ var samplesApp = angular.module('samples', ['ngRoute','ui.bootstrap','angularUtils.directives.dirPagination']);
+
+ samplesApp.config(function ($routeProvider) {
+            $routeProvider.
+            when('/customeraccountlist', {
+                templateUrl: '/customeraccountlist',
+                controller: 'samplesController',
+                params: 'test'
+            }).
+            when('/customerlist', {
+                templateUrl: '/customerlist',
+                controller: 'samplesController',
+                params: 'test'
+            }).
+            when('/transactionsist', {
+                templateUrl: '/transactionsist',
+                controller: 'samplesController',
+                params: 'test'
+            })
+
+        })
+
+ samplesApp.controller('samplesController', function ($scope ,$rootScope, $q, $http, $window,$route, $location) {
+                $scope.customers=[];
+				$scope.customeraclist = [];
+				$scope.name=[];
+
+        // for cacel redirection
+        $scope.add = true;
+        var redirect = function (type) {
+            switch (type) {
+                case 0:
+                     window.location.href = "http://localhost:9000/customerlist";
+                    break;
+                case 1:
+                     window.location.href = "http://localhost:9000/customeraccountlist";
+                    break;
+				case 2:
+                     window.location.href = "http://localhost:9000/transactionsist";
+                    break;	
+					
+            }
+        };
+
+ $scope.cancel1 = function (type) {
+     redirect(type);
+    }
+
+// get list operation
+     $scope.cusfirstid;
+                        $http({ method: 'GET', url: "http://localhost:9000/customer" })
+                            .success(function (data1, status, headers, config) {
+                                 if (status == '200') {
+                                $scope.customers = data1;
+                                     $scope.cusfirstid=$scope.customers[0].id;
+                                }
+                            })
+                            .error(function (html, status) {
+
+                            });
+							
+
+
+                $rootScope.getcus = function() {
+
+						$scope.submit = true;
+                        $http({ method: 'GET', url: "http://localhost:9000/customer" })
+                            .success(function (data1, status, headers, config) {
+                                 if (status == '200') {
+                                 //console.log(data1);
+                                $scope.customers = data1;
+
+
+                                }
+                            })
+                            .error(function (html, status) {
+
+                            });
+                };
+                $scope.customersaccountlist=[];
+                $scope.cusfirstaccountid;
+                $rootScope.getcusaccount = function(v) {
+                        $scope.customerAcountList = [];
+                        $http({ method: 'POST', url: "http://localhost:9000/customerlistpost" })
+                            .success(function (data1, status, headers, config) {
+							//$scope.customeraclist = data1;
+							$scope.tempid = v;
+							$scope.customersaccountlist = data1;
+                                 if (status == '200') {
+                                     angular.forEach(data1, function(e){
+                                     angular.forEach($scope.customers, function(c){
+
+                                            if(e.id == c.id){
+                                                e.id = c.id;
+                                                //e.status =c.status;
+                                                e.name =c.name;
+                                                e.address=c.address;
+                                                $scope.customerAcountList.push(e);
+                                                $scope.cusfirstaccountid=$scope.customerAcountList[0].id;
+
+                                            }
+                                        });
+                                     });
+                                 }
+                                 $scope.$apply();
+                            })
+                            .error(function (html, status) {
+                            });
+
+
+                };
+
+                // get account type
+
+                    $scope.actype;
+                    $scope.matchid;
+                    $scope.matchname;
+					/*$scope.getAccountType = function(){
+
+					 for (var i = 0; i < $scope.transactionsistresult.length ; i++) {
+
+                             if($scope.transactionsistresult[i].id==$scope.Depositransact.id)
+					        {
+					            $scope.actype=$scope.transactionsistresult[i].name;
+					            //$scope.selectedcust=$scope.transactionsistresult[i].name;
+                                //break;
+					        }
+
+
+                            if($scope.transactionsistresult[i].id=$scope.customersaccountlist[i].accountId)
+                             {
+                                $scope.matchid=$scope.customersaccountlist[i].id;
+                                if($scope.customers[i].id=$scope.matchid)
+                                {
+                                    $scope.matchname=$scope.customers[i].name;
+                                }
+                             }
+                       }
+                   }
+*/
+
+                $scope.transactionsistresult=[];
+                $scope.activetransactAcountList=[];
+                $rootScope.gettransactionlist = function() {
+                    //$rootScope.getcusaccount();
+                             $http({ method: 'POST', url: "http://localhost:9000/transactionsistpost" })
+                                .success(function (data1, status, headers, config) {
+                                $scope.transactionsistresult = data1;
+
+                                   // $scope.customersaccountlist = data1;
+                                    if (status == '200') {
+                                        for (var i = 0; i < $scope.customersaccountlist.length ; i++) {
+                                            for (var j = 0; j < $scope.transactionsistresult.length ; j++) {
+                                                if($scope.customersaccountlist[i].status=="active" && $scope.customersaccountlist[i].accountId==$scope.transactionsistresult[j].id ){
+                                                    $scope.transactionsistresult[j].custName=$scope.customersaccountlist[i].name;
+                                                    $scope.activetransactAcountList.push($scope.transactionsistresult[j]);
+                                                }
+                                            }
+                                        }
+                                    }
+                                })
+                                .error(function (html, status) {
+
+                              });
+
+                };
+
+                // redirection for add operation
+                $scope.addcustomerform = function() {
+
+                        window.location.href = "http://localhost:9000//addcustomer";
+                };
+
+                $scope.addcustomeraccountform = function() {
+
+                        window.location.href = "http://localhost:9000//addcustomeraccount";
+                };
+
+				// redirection for customer  list
+                $scope.getcustomerlist = function() {						
+
+                        window.location.href = "http://localhost:9000/customerlist";
+                };
+
+				// redirection for customer account list
+                $scope.getcustomeraccountlist = function(e) {
+                        $rootScope.tempid = e;
+						window.location.href = "http://localhost:9000/customeraccountlist/"+e ;
+						//$location.path("http://localhost:9000/customeraccountlist");
+                };
+
+                 $scope.addResearcTemplate = function () {
+                     //$scope.IsVisible1 = true;
+                     //$scope.IsVisible2 = true;
+                 };
+
+				// redirection for transaction list
+				$scope.gettransactionsist = function(id) {
+
+                        window.location.href = "http://localhost:9000/transactionsist/"+id;
+                };
+
+// update customer
+$scope.upCust = function (valid) {
+                        $scope.add = true;
+                        $scope.update = false;
+                        $scope.CustomerDetail;
+                        data = $scope.CustomerDetail;
+                        $scope.message = "";
+
+                        if(valid==true){
+                            $http({
+                                url: "/updatecustomer",
+                                method: "POST",
+                                data: data
+                            }).success(function (data1, status, headers, config) {
+                                $scope.message = data1;
+                                $scope.getcus();
+                                alert(data1);
+                                $window.location.reload();
+                            })
+                        }
+                        else{
+                             return false;
+                        }
+                        $scope.$apply();
+                    }
+
+           $scope.activeInactiveCustAccount = function (cusaccount) {
+
+               var toggleresult;
+               if(cusaccount.status=="active")
+               {
+                   toggleresult="inactive"
+               }
+               else
+               {
+                   toggleresult="active"
+               }
+
+               data = {"id":cusaccount.id,"accountId":cusaccount.accountId,"status":toggleresult};
+               $scope.message = "";
+
+                   $http({
+                       url: "/activeinactivecusaccount",
+                       method: "POST",
+                       data: data
+                   }).success(function (data1, status, headers, config) {
+                       $scope.message = data1;
+                       alert(data1);
+                       $window.location.reload();
+                   })
+
+               $scope.$apply();
+           }
+
+// add operation
+                //addcustomer
+                $scope.custDetails = {};
+                $scope.addCust = function (valid) {
+
+                        $scope.submit = true;
+                        $scope.CustomerDetail;
+                        data = $scope.CustomerDetail;
+
+                            if(valid==true)
+                            {
+                              $http({
+                                url: "http://localhost:9000/addcustomer1",
+                                method: "POST",
+                                data: data
+                                }).success(function (data1, status, headers, config) {
+
+                                    for (var i = 0; i < 1 ; i++) {
+                                            $scope.customers.push(data);
+
+                                            console.log($scope.customers.length)
+                                        }
+                                   alert(data1);
+                                  $window.location.reload();
+
+
+                            })
+                             $('#myModal').modal('hide');
+
+                                $rootScope.getcustomerlist();
+                            }
+                            else
+                            {
+                                 return false;
+                            }
+
+                    }
+					
+           $scope.selectcust = function(val){
+
+                   $scope.update = true;
+                   $scope.add = false;
+                   $scope.message = "";
+                   angular.forEach( $scope.customers, function(e){
+                       if(e.id==val){
+
+                           $scope.CustomerDetail = {
+                               id:e.id,
+                               name:e.name,
+                               address:e.address,
+                               emailId: e.emailId,
+                               phoneNo: e.phoneNo
+                           }
+                       }
+                   });
+
+                     $('table').on('click', '.clickable-row', function(event) {
+                        $(this).addClass('active').siblings().removeClass('active');
+                      });
+
+                    document.getElementById("id").disabled = true;
+
+               }
+     $scope.fromaccount =false;$scope.toaccount =false;
+     $scope.selectaccount = function(type){
+
+         if(type == 'fromacc'){$scope.fromaccount =true;$scope.toaccount = false; }else if(type == 'toacc'){$scope.toaccount =true;$scope.fromaccount =false; }
+
+
+     }
+     $scope.selectcusttransfer = function(val){
+         angular.forEach( $scope.activetransactAcountList, function(e){
+             if(e.id==val){
+                 if($scope.fromaccount){
+                    $scope.fromacc  =val; $scope.balanceamount = e.balance; $scope.fromaccNumber = e.id;
+                     console.log($scope.balanceamount);
+                 }
+                 if($scope.toaccount){
+                     $scope.toacc  =val; $scope.toaccNumber = e.id;
+                 }
+             }
+         });
+
+         $('table').on('click', '.clickable-row', function(event) {
+             $(this).addClass('active').siblings().removeClass('active');
+         });
+     }
+
+     $scope.tranferamount = function(){
+
+         if(angular.isUndefined($scope.fromacc)){
+             alert("Please select from account"); return false;
+         }
+
+
+         console.log(parseInt($scope.amountotransfer),parseInt($scope.balanceamount));
+
+         if(parseInt($scope.amountotransfer) <= parseInt($scope.balanceamount)){
+
+             //$scope.fromaccNumber $scope.toaccNumber
+             //$scope.amountotransfer
+             //withdraw amount from from account
+             data1 = {"id":$scope.fromaccNumber,"amount":$scope.amountotransfer};
+
+             $http({
+                 url: "http://localhost:9000/withdrawamount",
+                 method: "PUT",
+                 data: data1
+             }).success(function (datares1, status, headers, config) {
+                 console.log(datares1, status);
+                 //$rootScope.gettransactionlist();
+             });
+
+
+
+
+             //deposit amount to to account
+             toaccdata = {"id":$scope.toaccNumber,"amount":$scope.amountotransfer};
+
+             $http({
+                 url: "http://localhost:9000/addamount",
+                 method: "PUT",
+                 data: toaccdata
+             }).success(function (toaccdata, status, headers, config) {
+                 console.log(toaccdata, status);
+             });
+
+         }else{
+
+             alert("Please enter amount less than or equal to the account balance");
+             console.log($scope.amountotransfer); return false;
+         }
+
+         alert("Amount transferred succcessfully");
+
+         $window.location.reload();
+
+     }
+
+					// add customer account
+           $scope.addCustAccount = function (valid) {
+                        $scope.submit = true;
+                        $scope.CustomerDetail1;
+                            if(valid==true)
+                            {
+                                    data1 = {"id":$scope.CustomerDetail1.id,"accountId":$scope.CustomerDetail1.accountId,"status":$scope.CustomerDetail1.status};
+                                   $http({
+                                            url: "http://localhost:9000/addcustomeraccountpost",
+                                            method: "POST",
+                                            data: data1
+                                        }).success(function (datares1, status, headers, config) {
+                                           data2 = {"id":$scope.CustomerDetail1.accountId,"name":$scope.CustomerDetail1.actype};
+                                            $http({
+                                                url: "http://localhost:9000/addcustomeraccountpost1",
+                                                method: "POST",
+                                                data: data2
+                                            }).success(function (datares2, status, headers, config) {
+                                                angular.forEach( $scope.customerAcountList, function(e){
+                                                    if(e.id==$scope.CustomerDetail1.id){
+                                                        e.accountId = $scope.CustomerDetail1.accountId;
+                                                        e.status =$scope.CustomerDetail1.status;
+
+                                                    }
+                                                });
+                                        });
+                                       alert(data1);
+                                       $window.location.reload();
+                                    });
+                                    $('#myModal').modal('hide');
+                            }
+                            else
+                            {
+                                 return false;
+                            }
+
+
+                    }
+					
+// add money
+
+					$scope.Depositamount123;
+
+
+					$scope.depositeamt = function (valid) {
+                        $scope.submit = true;
+                        data = $scope.Depositamount123;
+                        if(valid==true)
+					    {
+                            data1 = {"id":$scope.Depositamount123.id,"amount":$scope.Depositamount123.amount};
+
+                            $http({
+                                url: "http://localhost:9000/addamount",
+                                method: "PUT",
+                                data: data1
+                            }).success(function (datares1, status, headers, config) {
+
+                            });
+                           $('#myModal').modal('hide');
+                           $rootScope.gettransactionlist();
+					    }else
+                    {
+                      return false;
+                    }
+
+                  }
+
+
+					$scope.withdrawamt = function (valid) {
+                        $scope.submit = true;
+                        data = $scope.Depositamount123;
+                        if(valid==true)
+					    {
+                        data1 = {"id":$scope.Depositamount123.id,"amount":$scope.Depositamount123.amount};
+
+                            $http({
+                                url: "http://localhost:9000/withdrawamount",
+                                method: "PUT",
+                                data: data1
+                            }).success(function (datares1, status, headers, config) {
+                             $('#myModal').modal('hide');
+                             $rootScope.gettransactionlist();
+                            });
+                        }
+                        else
+                        {
+                          return false;
+                        }
+
+                    }
+
+
+
+
+        /*   $scope.historyList=[];
+					$scope.viewhistory = function (id) {
+                       $scope.submit = true;
+                       // $scope.getAccountType();
+                           // alert($scope.Depositransact.accountId);
+                           $http({
+                               url: "http://localhost:9000/viewhistory/"+id,
+                               method: "GET",
+                               data: {"id":id}
+                               }).success(function (data1, status, headers, config) {
+                               $scope.historyList = JSON.parse(data1);
+                               $scope.$apply();
+                           })
+                   }
+
+                   */
+
+     $rootScope.historyList=[];
+     $scope.viewhistory = function (id) {
+         $scope.submit = true;
+         // $scope.getAccountType();
+         // alert($scope.Depositransact.accountId);
+         $http({
+             url: "http://localhost:9000/viewhistory/"+id,
+             method: "GET",
+             data: {"id":id}
+         }).success(function (data1, status, headers, config) {
+
+            // $rootScope.historyList=[];
+             angular.forEach( JSON.parse(data1), function(d){
+                 e={};
+                 e.type = d.type;e.amount = d.amount;
+                 e.at = d.at[0]+"-"+d.at[1]+"-"+d.at[2];
+                 e.t=d.at[3]+":"+d.at[4]+":"+d.at[5]
+                 $rootScope.historyList.push(e);
+             });
+
+             //$scope.historyList = JSON.parse(data1);
+             $scope.$apply();
+         })
+     }
+
+             $scope.toptenRecords="";$scope.todayval="";$scope.balance_transfer = false;
+             $scope.today= function(customerID){
+                 $scope.toptenRecords="";
+                 var curDate = new Date();
+                 var y = curDate.getFullYear();
+                 var m = curDate.getMonth() + 1;
+                 if (m < 10) {
+                     //m = '0' + m;
+                     m = m;
+                 }
+                 var d = curDate.getDate();
+                 if (d < 10) {
+                     d = '0' + d;
+                 }
+                 var h = curDate.getHours();
+                 var mm = curDate.getMinutes();
+                 var s = curDate.getSeconds();
+
+                 //$scope.todayval = y + '-' + m + '-' + d;
+                 $scope.todayval = y + '-' + m + '-' + d;
+             }
+
+             $scope.topten = function(){
+                 $scope.todayval="";$scope.balance_transfer = false;
+                 $scope.toptenRecords =2
+             }
+
+
+             $scope.opendates = function(){
+                 $scope.balance_transfer = false;
+                 $scope.selectrange = !$scope.selectrange;
+             }
+
+
+             $scope.converDate = function (inputDate){
+
+                 var inputDateTemp = new Date(inputDate);
+                 var y = inputDateTemp.getFullYear();
+                 var m = inputDateTemp.getMonth();
+                 var d = inputDateTemp.getDate();
+
+                 return y+"-"+(m+1)+"-"+d;
+
+             }
+
+
+
+
+
+           var customerID = $location.$$absUrl.substring($location.$$absUrl.lastIndexOf("/")+1,$location.$$absUrl.length)
+            if($location.$$absUrl.indexOf("transactionsist")!=-1){
+                $scope.viewhistory(customerID);
+            }
+
+$rootScope.gettransactionlist();
+$rootScope.getcusaccount();
+
+    $scope.Listfilter = $rootScope.historyList;
+    console.log($rootScope.historyList);
+     $scope.daterange = function(id){
+         $scope.balance_transfer = false;
+         //$scope.viewhistory(id);
+         console.log($scope.startDate,$scope.endDate);
+         if(angular.isUndefined($scope.startDate) || angular.isUndefined($scope.startDate)) {
+             return false;
+         }
+         $scope.todayval="";
+         var tempArray=[];
+         $scope.toptenRecords="";
+         var startTime = new Date($scope.converDate( $scope.startDate )).getTime();
+         var endTime = new Date($scope.converDate( $scope.endDate )).getTime();
+         // console.log(startTime);console.log(endTime);
+         console.log($scope.historyList);
+
+         angular.forEach($scope.historyList,function(data){
+             //alert("sbdjshdjhsd");
+             e={};
+             //console.log(data);
+             var dateval = new Date(data.at).getTime();
+
+             // console.log(dateval +" ---" + startTime);
+             if(dateval >= startTime &&  dateval <= endTime){
+                 //alert("Menka");
+                 e.amount    = data.amount; e.name = data.name; e.at = data.at; e.t = data.t; e.type = data.type;
+                 //  console.log(data.at);
+                 tempArray.push(e);
+             }
+             console.log(tempArray);
+             // $scope.historyList =tempArray;
+         });
+
+         $scope.Listfilter =tempArray;
+         // console.log(tempArray);
+     }
+
+   });
+
+        </script>
+	<style>.btn-glyphicon { padding:10px; background:#ffffff; margin-right:4px; }
+	   .icon-btn { padding: 1px 10px 3px 2px; border-radius:20px;}
+	</style>
+  </head>
+  <body ng-controller="samplesController">
+	
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a href="../" class="navbar-brand">Banking Services</a>
+          <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+        <div class="navbar-collapse collapse" id="navbar-main">
+          <ul class="nav navbar-nav pull-right">
+           <!-- <li class="dropdown">
+              <a href="#">Home</a>
+            </li>
+			<li>
+              <a href="#">Balance</a>
+            </li>
+            <li>
+              <a href="#">Transfer</a>
+            </li>-->
+              <li><a ng-href="/customerlist"><span class="glyphicon btn-glyphicon glyphicon-user img-circle text-success"></span>Customers  </a></li>
+              <li><a ng-href="/customeraccountlist/all"><span class="glyphicon btn-glyphicon glyphicon glyphicon-transfer img-circle text-success"></span>Accounts  </a></li>
+              <li><a ng-href="/transactionsist/{{cusfirstaccountid}}"><span class="glyphicon btn-glyphicon glyphicon-usd img-circle text-success"></span>Transactions</a></li>
+          </ul>
+
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#" target="_blank"></a></li>
+            <li><a href="#" target="_blank"></a></li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="">
+		 <div class="row">
+          <div class="col-lg-12">&nbsp;</div>
+        </div>
+		 
+		 
+		<div class="row">			
+			<div class="col-md-12">
+				<div class="col-md-3"></div>
+
+
+               <!-- <button class="btn " ng-click="getcustomerlist()">
+                    <span class="glyphicon btn-glyphicon glyphicon-user img-circle text-success"></span>Customers  </button>
+                <button class="btn "  ng-click="getcustomeraccountlist()">
+                    <span class="glyphicon btn-glyphicon glyphicon glyphicon-transfer img-circle text-success"></span>Accounts  </button>
+                <button class="btn "  ng-click="gettransactionsist() ; getcusaccount();">
+                    <span class="glyphicon btn-glyphicon glyphicon-usd img-circle text-success"></span>Transactions    </button>
+
+                <a ng-href="/customerlist"><span class="glyphicon btn-glyphicon glyphicon-user img-circle text-success"></span>Customers  </a>
+                <a ng-href="/customeraccountlist/all"><span class="glyphicon btn-glyphicon glyphicon glyphicon-transfer img-circle text-success"></span>Accounts  </a>
+                <a ng-href="/transactionsist/{{cusfirstaccountid}}"><span class="glyphicon btn-glyphicon glyphicon-usd img-circle text-success"></span>Transactions</a>
+               <!-- <a ng-href="/balancetransfer/{{cusfirstaccountid}}"><span class="glyphicon btn-glyphicon glyphicon-usd img-circle text-success"></span>Balance Transfer</a>-->
+
+			</div>
+		   
+		</div>
+
+		
+		@content
+		
+        
+	<footer>
+		<div class="row"><hr></div>
+        <div class="row">		
+          <div class="col-lg-12">			
+            <ul class="list-unstyled">
+              <li class="pull-right"><a href="#top">Back to top</a></li>
+              <li><a href="#" onclick="pageTracker._link(this.href); return false;">About Us</a></li>
+              <li><a href="#">Contact Us</a></li>
+              <li><a href="#">Support</a></li>
+            </ul>            
+          </div>
+        </div>
+      </footer>
+
+  </body>
+</html>
+
+
+
+
